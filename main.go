@@ -167,6 +167,9 @@ func NewRecipeHandler(c *gin.Context) {
 	}
 
 	// Add the recipe to the chef's list of recipes
+	recipe.Id = xid.New().String()
+	recipe.PublishedAt = time.Now()
+	recipe.ChefId = chef.Id
 	chef.Recipes = append(chef.Recipes, &recipe)
 
 	// Append the recipe to the global list of recipes
