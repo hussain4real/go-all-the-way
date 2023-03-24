@@ -12,8 +12,26 @@ var recipes []Recipe
 var chefs []Chef
 
 func init() {
-	recipes = make([]Recipe, 0)
-	chefs = make([]Chef, 0)
+	//create a new recipe for testing
+	recipes = append(recipes, Recipe{
+		Id:           "1",
+		Name:         "Recipe 1",
+		Keywords:     []string{"keyword 1", "keyword 2"},
+		Ingredients:  []string{"ingredient 1", "ingredient 2"},
+		Instructions: []string{"instruction 1", "instruction 2"},
+		PublishedAt:  time.Now(),
+		ChefId:       "1",
+	})
+	//create a new chef for testing
+	chefs = append(chefs, Chef{
+		Id:                "1",
+		Name:              "Chef 1",
+		Country:           "Country 1",
+		YearsOfExperience: 1,
+		Recipes: []*Recipe{
+			&recipes[0],
+		},
+	})
 }
 
 type Chef struct {
@@ -175,15 +193,19 @@ func NewRecipeHandler(c *gin.Context) {
 	// Append the recipe to the global list of recipes
 	recipes = append(recipes, recipe)
 
-	c.JSON(http.StatusOK, recipe)
+	c.JSON(http.StatusOK, recipes)
 }
 
 func main() {
 	router := gin.Default()
+	router.GET("/chefs", func(c *gin.Context) {
+		c.JSON(http.StatusOK, chefs)
+	})
 	router.POST("/recipes", NewRecipeHandler)
 	router.GET("/recipes", ListRecipesHandler)
 	router.PUT("recipes/:recipe-id", UpdateRecipeHandler)
 	router.DELETE("recipes/:recipe-id", DeleteRecipeHandler)
+
 	err := router.Run()
 	if err != nil {
 		return
