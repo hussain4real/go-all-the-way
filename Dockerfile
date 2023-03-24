@@ -1,17 +1,17 @@
 #start building this image from this source (OS, etc...)
-FROM golang:1.19-alpine3.17
+FROM golang:1.20-alpine
 
-COPY . /go/src/go-docker
+# Set the working directory to /app
+WORKDIR /app
 
-WORKDIR /go/src/go-docker
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-COPY go.mod ./
+# Build the Go app
+RUN go build -o main .
 
-RUN go mod download
+# Expose port 8080
+EXPOSE 8080
 
-COPY . .
-
-RUN ["go", "get", "github.com/githubnemo/CompileDaemon"]
-RUN ["go", "install", "github.com/githubnemo/CompileDaemon"]
-
-ENTRYPOINT CompileDaemon -polling -log-prefix=false -build="go build main.go" -command="./main"
+# Run the executable
+CMD ["./main"]
